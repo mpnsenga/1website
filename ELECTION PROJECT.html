@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> People's choice Voting System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, rgb(252, 221, 82), rgb(244, 185, 66));
+            padding: 12px 24px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 2px;
+        }
+
+        .logo-text {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: #ffeeee;
+        }
+
+        .cta-button {
+            background: rgb(244, 185, 66)d73502;
+            color: white;
+            padding: 10px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .cta-button:hover {
+            background: rgb(244, 185, 66);
+            transform: translateY(-1px);
+        }
+
+        .mobile-menu {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .mobile-menu {
+                display: block;
+            }
+        }
+        * {
+            margin: 0;
+            padding: 0px;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, hsl(0, 0%, 100%) 0%, #ffffff 100%);
+            min-height: 100vh;
+            padding: 0px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 10px auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, rgb(252, 221, 82), #f3f5f5 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .step {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: rgb(244, 185, 66)d73502;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        .btn {
+            background: rgb(244, 185, 66);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin: 10px 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .candidate-form {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #4facfe;
+        }
+
+        .candidate-form h3 {
+            color: #4facfe;
+            margin-bottom: 15px;
+        }
+
+        .criteria-display {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            color: #2d3436;
+            font-weight: 600;
+        }
+
+        .eligible-candidates {
+            background: #d4edda;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #28a745;
+        }
+
+        .eligible-candidates h3 {
+            color: #155724;
+            margin-bottom: 15px;
+        }
+
+        .candidate-option {
+            background: white;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .candidate-option:hover {
+            border-color: #4facfe;
+            transform: translateX(5px);
+        }
+
+        .candidate-option.selected {
+            border-color: #4facfe;
+            background: #f0f8ff;
+        }
+
+        .results {
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .winner {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        .vote-count {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            margin: 5px 0;
+            border-left: 4px solid #4facfe;
+        }
+
+        .progress-bar {
+            background: #e1e8ed;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            height: 100%;
+            transition: width 0.8s ease;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #dc3545;
+        }
+
+        .voter-info {
+            background: #cce7ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <!-- Logo -->
+            <div class="logo">
+                <div class="logo-icon"></div>
+                <span class="logo-text">People’s choice</span>
+            </div>
+
+            <!-- Navigation Links -->
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="portfolio.html">Portfolio</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+
+            <!-- CTA Button -->
+            <a href="ELECTION PROJECT.html" class="cta-button">Vote now</a>
+
+            <!-- Mobile Menu Button -->
+            <button class="mobile-menu">
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="header">
+            <h1><img src="vote.png" width="75px" height="100px"></vote></a> Welcome to people's choice Voting System</h1>
+            <p>Democratic Decision Making Made Easy</p>
+        </div>
+
+        <div class="content">
+            <!-- Step 1: Setup Criteria -->
+            <div id="step1" class="step active">
+                <h2>Step 1: Set Voting Criteria</h2>
+                <p>Define the minimum requirements for candidate eligibility:</p>
+                
+                <div class="form-group">
+                    <label for="minConduct">Minimum Conduct Score (0-40):</label>
+                    <input type="number" id="minConduct" min="1" max="100" placeholder=" 35">
+                </div>
+
+                <div class="form-group">
+                    <label for="minScore">Minimum Performance Score (0-100):</label>
+                    <input type="number" id="minScore" min="1" max="100" placeholder=" 75">
+                </div>
+
+                <div class="form-group">
+                    <label for="numVoters">Number of Voters:</label>
+                    <input type="number" id="numVoters" min="1" placeholder=" 10">
+                </div>
+
+                <div class="form-group">
+                    <label for="numCandidates">Number of Candidates:</label>
+                    <input type="number" id="numCandidates" min="1" max="20" placeholder=" 5">
+                </div>
+
+                <button class="btn" onclick="setupCandidates()">Next: Add Candidates</button>
+            </div>
+
+            <!-- Step 2: Add Candidates -->
+            <div id="step2" class="step">
+                <h2>Step 2: Add Candidate Information</h2>
+                <div class="criteria-display" id="criteriaDisplay"></div>
+                <div id="candidateInputs"></div>
+                <button class="btn" onclick="processCandidates()">Process Candidates</button>
+                <button class="btn btn-secondary" onclick="showStep('step1')">Back</button>
+            </div>
+
+            <!-- Step 3: Show Eligible Candidates -->
+            <div id="step3" class="step">
+                <h2>Step 3: Eligible Candidates</h2>
+                <div id="eligibleCandidatesDisplay"></div>
+                <button class="btn" onclick="startVoting()">Start Voting</button>
+                <button class="btn btn-secondary" onclick="showStep('step2')">Back</button>
+            </div>
+
+            <!-- Step 4: Voting Process -->
+            <div id="step4" class="step">
+                <h2>Step 4: Voting in Progress</h2>
+                <div class="voter-info" id="voterInfo"></div>
+                <div id="votingInterface"></div>
+                <button class="btn" id="castVoteBtn" onclick="castVote()" disabled>Cast Vote</button>
+                <button class="btn btn-secondary" onclick="showStep('step3')">Back</button>
+            </div>
+
+            <!-- Step 5: Results -->
+            <div id="step5" class="step">
+                <h2>🏆 Election Results</h2>
+                <div id="resultsDisplay"></div>
+                <button class="btn" onclick="resetElection()">Start New Election</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let candidates = [];
+        let eligibleCandidates = [];
+        let currentVoter = 1;
+        let selectedCandidate = -1;
+        let votes = [];
+        let criteria = {};
+
+        function showStep(stepId) {
+            document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+            document.getElementById(stepId).classList.add('active');
+        }
+
+        function setupCandidates() {
+            const minConduct = parseInt(document.getElementById('minConduct').value);
+            const minScore = parseInt(document.getElementById('minScore').value);
+            const numVoters = parseInt(document.getElementById('numVoters').value);
+            const numCandidates = parseInt(document.getElementById('numCandidates').value);
+
+            if (!minConduct || !minScore || !numVoters || !numCandidates) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            criteria = { minConduct, minScore, numVoters, numCandidates };
+            
+            // Display criteria
+            document.getElementById('criteriaDisplay').innerHTML = `
+                <strong>Eligibility Criteria:</strong> Minimum Conduct: ${minConduct}, Minimum Score: ${minScore} | 
+                <strong>Voters:</strong> ${numVoters} | <strong>Total Candidates:</strong> ${numCandidates}
+            `;
+
+            // Generate candidate input forms
+            let candidateHTML = '';
+            for (let i = 0; i < numCandidates; i++) {
+                candidateHTML += `
+                    <div class="candidate-form">
+                        <h3>Candidate ${i + 1}</h3>
+                        <div class="form-group">
+                            <label>Name:</label>
+                            <input type="text" id="name${i}" placeholder="Enter candidate name">
+                        </div>
+                        <div class="form-group">
+                            <label>Conduct Score (0-40):</label>
+                            <input type="number" id="conduct${i}" min="1" max="100" placeholder="Conduct score">
+                        </div>
+                        <div class="form-group">
+                            <label>Performance Score (0-100):</label>
+                            <input type="number" id="score${i}" min="1" max="100" placeholder="Performance score">
+                        </div>
+                    </div>
+                `;
+            }
+            document.getElementById('candidateInputs').innerHTML = candidateHTML;
+            showStep('step2');
+        }
+
+        function processCandidates() {
+            candidates = [];
+            let hasError = false;
+
+            for (let i = 0; i < criteria.numCandidates; i++) {
+                const name = document.getElementById(`name${i}`).value.trim();
+                const conduct = parseInt(document.getElementById(`conduct${i}`).value);
+                const score = parseInt(document.getElementById(`score${i}`).value);
+
+                if (!name || !conduct || !score) {
+                    alert(`Please fill in all fields for Candidate ${i + 1}`);
+                    hasError = true;
+                    break;
+                }
+
+                candidates.push({ name, conduct, score });
+            }
+
+            if (hasError) return;
+
+            // Filter eligible candidates
+            eligibleCandidates = candidates.filter(c => 
+                c.conduct >= criteria.minConduct && c.score >= criteria.minScore
+            ).map(c => ({ ...c, votes: 0 }));
+
+            if (eligibleCandidates.length === 0) {
+                document.getElementById('eligibleCandidatesDisplay').innerHTML = `
+                    <div class="error">
+                        <h3>❌ No Eligible Candidates Found</h3>
+                        <p>None of the candidates meet the minimum criteria of Conduct ≥ ${criteria.minConduct} and Score ≥ ${criteria.minScore}</p>
+                        <p>Please adjust the criteria or candidate scores.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Display eligible candidates
+            let eligibleHTML = `
+                <div class="eligible-candidates">
+                    <h3>✅ Eligible Candidates (${eligibleCandidates.length})</h3>
+            `;
+
+            eligibleCandidates.forEach((candidate, index) => {
+                eligibleHTML += `
+                    <div class="vote-count">
+                        <span><strong>${candidate.name}</strong></span>
+                        <span>Conduct: ${candidate.conduct} | Score: ${candidate.score}</span>
+                    </div>
+                `;
+            });
+
+            eligibleHTML += '</div>';
+            document.getElementById('eligibleCandidatesDisplay').innerHTML = eligibleHTML;
+            showStep('step3');
+        }
+
+        function startVoting() {
+            currentVoter = 1;
+            votes = Array(eligibleCandidates.length).fill(0);
+            displayVotingInterface();
+            showStep('step4');
+        }
+
+        function displayVotingInterface() {
+            document.getElementById('voterInfo').innerHTML = `
+                <h3>Voter ${currentVoter} of ${criteria.numVoters}</h3>
+                <p>Please select your preferred candidate:</p>
+            `;
+
+            let votingHTML = '';
+            eligibleCandidates.forEach((candidate, index) => {
+                votingHTML += `
+                    <div class="candidate-option" onclick="selectCandidate(${index})">
+                        <strong>${index + 1}. ${candidate.name}</strong><br>
+                        <small>Conduct: ${candidate.conduct} | Performance: ${candidate.score}</small>
+                    </div>
+                `;
+            });
+
+            document.getElementById('votingInterface').innerHTML = votingHTML;
+            selectedCandidate = -1;
+            document.getElementById('castVoteBtn').disabled = true;
+        }
+
+        function selectCandidate(index) {
+            selectedCandidate = index;
+            
+            // Update UI
+            document.querySelectorAll('.candidate-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.querySelectorAll('.candidate-option')[index].classList.add('selected');
+            document.getElementById('castVoteBtn').disabled = false;
+        }
+
+        function castVote() {
+            if (selectedCandidate === -1) return;
+
+            votes[selectedCandidate]++;
+            currentVoter++;
+
+            if (currentVoter <= criteria.numVoters) {
+                displayVotingInterface();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            // Update candidate vote counts
+            eligibleCandidates.forEach((candidate, index) => {
+                candidate.votes = votes[index];
+            });
+
+            // Find winner(s)
+            const maxVotes = Math.max(...votes);
+            const winners = eligibleCandidates.filter(c => c.votes === maxVotes);
+
+            let resultsHTML = '<div class="results"><h3>📊 Vote Distribution</h3>';
+            
+            eligibleCandidates.forEach(candidate => {
+                const percentage = criteria.numVoters > 0 ? (candidate.votes / criteria.numVoters * 100).toFixed(1) : 0;
+                resultsHTML += `
+                    <div class="vote-count">
+                        <span><strong>${candidate.name}</strong></span>
+                        <span>${candidate.votes} votes (${percentage}%)</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${percentage}%"></div>
+                    </div>
+                `;
+            });
+
+            resultsHTML += '</div>';
+
+            // Winner announcement
+            if (winners.length === 1) {
+                resultsHTML += `
+                    <div class="winner">
+                        🎉 Winner: ${winners[0].name} with ${winners[0].votes} votes!
+                    </div>
+                `;
+            } else if (winners.length > 1) {
+                const winnerNames = winners.map(w => w.name).join(', ');
+                resultsHTML += `
+                    <div class="winner">
+                        🤝 Tie between: ${winnerNames} with ${maxVotes} votes each!
+                    </div>
+                `;
+            }
+
+            document.getElementById('resultsDisplay').innerHTML = resultsHTML;
+            showStep('step5');
+        }
+
+        function resetElection() {
+            candidates = [];
+            eligibleCandidates = [];
+            currentVoter = 1;
+            selectedCandidate = -1;
+            votes = [];
+            criteria = {};
+
+            // Clear all inputs
+            document.querySelectorAll('input').forEach(input => input.value = '');
+            
+            showStep('step1');
+        }
+    </script>
+</body>
+</html>
