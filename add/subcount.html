@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Subscriber Count as Members</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+        }
+        .members-button {
+            background-color: #ff69b4; /* Pink color from the image */
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px; /* Rounded edges like the image */
+            cursor: default; /* Not clickable, just a display */
+            display: inline-block;
+            margin: 10px;
+            text-transform: uppercase; /* Match the all-caps style */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="subCount" class="members-button">MEMBERS: Loading...</div>
+    </div>
+
+    <script>
+        // Replace with your YouTube API Key and Channel ID
+        const apiKey = 'AIzaSyBxmUzWXe2NSYxGKGDMynAi6e79K-iokZw';
+                                const channelId = 'UCMu7So66SVEo6mdwcAkElHA';
+                                const subCountElement = document.getElementById('subCount');
+                        
+                                function fetchSubscriberCount() {
+                                    fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=UCMu7So66SVEo6mdwcAkElHA&key=AIzaSyBxmUzWXe2NSYxGKGDMynAi6e79K-iokZw`)
+                                        
+        .then(response => response.json())
+                .then(data => {
+                    const subscriberCount = data.items[0].statistics.subscriberCount;
+                    subCountElement.innerHTML = `MEMBERS: ${subscriberCount}`;
+                })
+                .catch(error => {
+                    subCountElement.innerHTML = 'MEMBERS: Error loading';
+                    console.error('Error:', error);
+                });
+        }
+
+        // Fetch subscriber count on page load
+        fetchSubscriberCount();
+
+        // Update every 5 minutes (300000 ms)
+        setInterval(fetchSubscriberCount, 300000);
+    </script>
+</body>
+</html>
