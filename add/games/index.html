@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game with novaprime_1 - Choose Your Adventure</title>
+    <style>
+        :root {
+            --primary: #ff6b6b;
+            --primary-foreground: #ffffff;
+            --accent-pink: #ff69b4;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1a1a1a; /* Temporary fallback */
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .header {
+            position: relative;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1rem 1.5rem;
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background-color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-foreground);
+            font-weight: bold;
+            font-size: 0.875rem;
+        }
+
+        .nav-links {
+            display: none;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: var(--primary);
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-pink);
+        }
+
+        .mobile-menu {
+            display: block;
+            background: transparent;
+            border: 2px solid var(--primary);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .nav-links {
+                display: flex;
+            }
+            .mobile-menu {
+                display: none;
+            }
+        }
+
+        <!--llllllll-->
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-image: url(concole.png);
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-attachment: fixed;
+            font-family: 'Arial', sans-serif;
+            /*background: white;*/
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background elements */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-shape:nth-child(1) {
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-shape:nth-child(2) {
+            top: 20%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .floating-shape:nth-child(3) {
+            bottom: 10%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        .floating-shape:nth-child(4) {
+            bottom: 20%;
+            right: 20%;
+            animation-delay: 1s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .main-title {
+            font-size: 4em;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d, #6bcf7f, #4ecdc4, #45b7d1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+        }
+
+        .description {
+            font-size: 1.1em;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 40px;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .game-card:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s;
+            opacity: 0;
+        }
+
+        .game-card:hover::before {
+            animation: shimmer 1.5s infinite;
+            opacity: 1;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-card:active {
+            transform: translateY(-5px) scale(1.02);
+        }
+
+        .game-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+            display: block;
+            animation: bounce 2s infinite;
+        }
+
+        .game-card:nth-child(2) .game-icon {
+            animation-delay: 0.5s;
+        }
+
+        .game-title {
+            font-size: 2em;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-description {
+            font-size: 1.1em;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .game-features {
+            list-style: none;
+            margin-bottom: 25px;
+        }
+
+        .game-features li {
+            font-size: 0.95em;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .game-features li::before {
+            content: '✨';
+            position: absolute;
+            left: 0;
+        }
+
+        .play-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .play-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .play-btn:hover::before {
+            left: 100%;
+        }
+
+        .play-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9em;
+            margin-top: 40px;
+            animation: fadeIn 2s ease-out;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.5em;
+            }
+            
+            .subtitle {
+                font-size: 1.2em;
+            }
+            
+            .games-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .game-card {
+                padding: 30px 20px;
+            }
+            
+            .game-icon {
+                font-size: 4em;
+            }
+            
+            .game-title {
+                font-size: 1.8em;
+            }
+        }
+
+        /* Game modal styles */
+        .game-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .game-modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            color: #333;
+            position: relative;
+            animation: modalSlideIn 0.5s ease-out;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2em;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s;
+        }
+
+        .close-btn:hover {
+            color: #ff6b6b;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+    height: 2.5rem;
+}
+
+.btn-creative {
+    background: var(--accent-pink);
+    color: white;
+    box-shadow: 0 25px 50px -12px hsla(320, 85%, 60%, 0.25);
+}
+    </style>
+</head>
+<header class="header">
+    <nav class="nav">
+        <!-- Logo -->
+        <div class="nav-left">
+            <div class="logo">
+                <span>NP_1</span>
+            </div>
+            
+            <!-- Navigation Links -->
+            <div class="nav-links">
+                <!--<a href="#" class="nav-link">Games streamed</a>-->
+                <a href="C:\Users\clark\OneDrive\Desktop\Final project\add\index.html" class="nav-link">Portfolio</a>
+                <a href="games/index.html" class="nav-link">Bonus games</a>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button class="mobile-menu">
+            <span class="menu-icon">☰</span>
+        </button>
+
+        <!-- Desktop CTA -->
+        <div class="nav-cta">
+            <a href="https://www.twitch.tv/novaprime_1"><button class="btn btn-creative">Twitch community</button></a>
+        </div>
+    </nav>
+</header>
+<body>
+    <div class="bg-animation">
+        <div class="floating-shape">🎮</div>
+        <div class="floating-shape">🎯</div>
+        <div class="floating-shape">⭐</div>
+        <div class="floating-shape">🚀</div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="main-title">🎮 Game with novaprime_1 🎮</h1>
+            <p class="subtitle">Choose Your Adventure</p>
+            <p class="subtitle">
+                Welcome to the ultimate gaming experience! Pick your favorite game below and dive into hours of fun and excitement.
+            </p>
+        </div>
+
+        <div class="games-grid">
+            <div class="game-card" onclick="selectGame('hangman')">
+                <span class="game-icon">✍️⬜❌</span>
+                <h2 class="game-title">Hangman</h2>
+                <p class="game-description">
+                    Test your vocabulary and deduction skills in this classic word-guessing game!
+                </p>
+                <ul class="game-features">
+                    <li>Random word selection</li>
+                    <li>Multiple categories</li>
+                    <li>Lives system</li>
+                    <li>Visual hangman drawing</li>
+                </ul>
+                <a href="game1.html"><button class="play-btn">Play Hangman</button></a>
+            </div>
+
+            <div class="game-card" onclick="selectGame('rps')">
+                <span class="game-icon">🪨📄✂️</span>
+                <h2 class="game-title">Rock Paper Scissors</h2>
+                <p class="game-description">
+                    Challenge the computer in this timeless game of strategy and luck!
+                </p>
+                <ul class="game-features">
+                    <li>Smart computer opponent</li>
+                    <li>Real-time scoring</li>
+                    <li>Win streak tracking</li>
+                    <li>Detailed statistics</li>
+                </ul>
+                <a href="game2.html"><button class="play-btn">Play RPS</button></a>
+            </div>
+
+            <div class="game-card" onclick="selectGame('rps')">
+                <span class="game-icon">🧟🔫⚰️</span>
+                <h2 class="game-title">Zombie Shooter</h2>
+                <p class="game-description">
+                    Challenge the computer in this timeless game of strategy and luck!
+                </p>
+                <ul class="game-features">
+                    <li>Thrilling Survival</li>
+                    <li>Real-time scoring</li>
+                    <li>Endless Challenges</li>
+                    <li>Co-op Chaos</li>
+                </ul>
+                <a href="game3.html"><button class="play-btn">Play ZS</button></a>
+            </div>
+
+            <div class="game-card" onclick="selectGame('rps')">
+                <span class="game-icon">🏃‍♂️💨🚧</span>
+                <h2 class="game-title">Endless Runner</h2>
+                <p class="game-description">
+                    Challenge the computer in this timeless game of strategy and luck!
+                </p>
+                <ul class="game-features">
+                    <li>Dodge obstacles</li>
+                    <li>Real-time scoring</li>
+                    <li>Win streak tracking</li>
+                    <li>Detailed statistics</li>
+                </ul>
+                <a href="game4.html"><button class="play-btn">Play ER</button></a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>🎲 More games coming soon! Stay tuned for exciting updates. 🎲</p>
+        </div>
+    </div>
+
+    <!-- Game Modal -->
+    <div class="game-modal" id="gameModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Loading Game...</h2>
+            <p id="modalDescription">Please wait while we prepare your game experience.</p>
+            <div style="margin: 20px 0;">
+                <div style="display: inline-block; animation: bounce 1s infinite;">🎮</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Store game data
+        const games = {
+            hangman: {
+                title: "🎯 Hangman Game",
+                description: "Get ready to test your word skills! The game is loading...",
+                // In a real implementation, you would have the actual game code here
+                // For now, we'll simulate loading
+                html: `<!-- Hangman game would be embedded here -->`
+            },
+            rps: {
+                title: "🪨📄✂️ Rock Paper Scissors",
+                description: "Prepare for battle! Choose your weapon wisely...",
+                // In a real implementation, you would have the actual game code here
+                html: `<!-- Rock Paper Scissors game would be embedded here -->`
+            }
+        };
+
+        function selectGame(gameType) {
+            const modal = document.getElementById('gameModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalDescription = document.getElementById('modalDescription');
+            
+            // Show modal with loading state
+            modal.classList.add('active');
+            modalTitle.textContent = games[gameType].title;
+            modalDescription.textContent = games[gameType].description;
+            
+            // Simulate game loading (in real app, this would redirect or embed the game)
+            setTimeout(() => {
+                if (gameType === 'hangman') {
+                    // In a real implementation, you would navigate to the hangman game
+                    // For demonstration, we'll show a message
+                    modalDescription.innerHTML = `
+                        <p>🎯 Hangman game is ready to play!</p>
+                        <p><strong>Features:</strong></p>
+                        <ul style="text-align: left; margin: 15px 0;">
+                            <li>✨ Random word selection from multiple categories</li>
+                            <li>🎨 Visual hangman drawing that progresses</li>
+                            <li>❤️ Lives system with 6 chances</li>
+                            <li>🏆 Win/lose animations and effects</li>
+                        </ul>
+                        <p><em>In a real implementation, the game would load here or in a new tab.</em></p>
+                    `;
+                } else if (gameType === 'rps') {
+                    // In a real implementation, you would navigate to the RPS game
+                    modalDescription.innerHTML = `
+                        <p>🪨📄✂️ Rock Paper Scissors is ready!</p>
+                        <p><strong>Features:</strong></p>
+                        <ul style="text-align: left; margin: 15px 0;">
+                            <li>🤖 Smart computer opponent</li>
+                            <li>📊 Real-time scoring and statistics</li>
+                            <li>🔥 Win streak tracking</li>
+                            <li>🎨 Beautiful animations and effects</li>
+                        </ul>
+                        <p><em>In a real implementation, the game would load here or in a new tab.</em></p>
+                    `;
+                }
+            }, 1500);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('gameModal');
+            modal.classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('gameModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Add some interactive effects
+        document.querySelectorAll('.game-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.05)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Animate elements on scroll (if page becomes longer)
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 1s ease-out';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.game-card').forEach(card => {
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>

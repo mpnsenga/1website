@@ -1,0 +1,612 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subway Surfers - Endless Runner Game</title>
+    <style>
+        body {
+            background-image: url(concole.png);
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            
+            overflow: hidden;
+        }
+        
+        #gameContainer {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        #ui {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            pointer-events: none;
+        }
+        
+        .ui-element {
+            pointer-events: auto;
+        }
+        
+        .score-display {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .controls-info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .menu-screen, .pause-screen, .game-over-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .menu-content {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 400px;
+            margin: 20px;
+        }
+        
+        .menu-title {
+            font-size: 36px;
+            font-weight: bold;
+            color: #4f46e5;
+            margin-bottom: 20px;
+        }
+        
+        .menu-subtitle {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.2s;
+        }
+        
+        .btn:hover {
+            background: #3730a3;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: #4f46e5;
+            border: 2px solid #4f46e5;
+        }
+        
+        .btn-outline:hover {
+            background: #4f46e5;
+            color: white;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .pause-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas"></canvas>
+        
+        <div id="ui">
+            <!-- Score Display -->
+            <div id="scoreDisplay" class="score-display ui-element hidden">
+                <div>Score: <span id="currentScore">0</span></div>
+                <div style="font-size: 12px; margin-top: 5px;">High Score: <span id="highScore">0</span></div>
+            </div>
+            
+            <!-- Pause Button -->
+            <button id="pauseBtn" class="pause-btn ui-element hidden" onclick="pauseGame()">⏸️</button>
+            
+            <!-- Controls Info -->
+            <div id="controlsInfo" class="controls-info ui-element hidden">
+                <div>Use A/D or ←/→ to move</div>
+                <div>Use W or ↑ or Space to jump</div>
+                <div>Use S or ↓ to slide</div>
+            </div>
+            
+            <!-- Menu Screen -->
+            <div id="menuScreen" class="menu-screen ui-element">
+                <div class="menu-content">
+                    <h1 class="menu-title">Subway Surfers</h1>
+                    <p class="menu-subtitle">Run through the subway, collect coins, and avoid obstacles!</p>
+                    <div style="margin-bottom: 20px;">
+                        <div style="font-size: 14px; color: #666;">High Score: <span id="menuHighScore">0</span></div>
+                    </div>
+                    <button class="btn" onclick="startGame()">▶️ Start Game</button>
+                </div>
+            </div>
+            
+            <!-- Pause Screen -->
+            <div id="pauseScreen" class="pause-screen ui-element hidden">
+                <div class="menu-content">
+                    <h2 style="font-size: 24px; margin-bottom: 20px;">Game Paused</h2>
+                    <div style="margin-bottom: 20px;">
+                        <div>Score: <span id="pauseScore">0</span></div>
+                        <div style="font-size: 14px; color: #666; margin-top: 5px;">High Score: <span id="pauseHighScore">0</span></div>
+                    </div>
+                    <button class="btn" onclick="resumeGame()">▶️ Resume</button>
+                    <button class="btn btn-outline" onclick="resetGame()">🔄 Menu</button>
+                </div>
+            </div>
+            
+            <!-- Game Over Screen -->
+            <div id="gameOverScreen" class="game-over-screen ui-element hidden">
+                <div class="menu-content">
+                    <h2 style="font-size: 28px; color: #dc2626; margin-bottom: 20px;">Game Over!</h2>
+                    <div style="margin-bottom: 20px;">
+                        <div style="font-size: 20px;">Final Score: <span id="finalScore">0</span></div>
+                        <div style="font-size: 16px; color: #666; margin-top: 5px;">High Score: <span id="gameOverHighScore">0</span></div>
+                        <div id="newHighScore" style="font-size: 14px; color: #4f46e5; margin-top: 10px; font-weight: bold; display: none;">🎉 New High Score!</div>
+                    </div>
+                    <button class="btn" onclick="startGame()">▶️ Play Again</button>
+                    <button class="btn btn-outline" onclick="resetGame()">🔄 Menu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Game constants
+        const LANES = [-2, 0, 2];
+        const GAME_SPEED = 0.1;
+        const JUMP_HEIGHT = 2;
+        const OBSTACLE_SPAWN_RATE = 0.02;
+        const COIN_SPAWN_RATE = 0.05;
+
+        // Game state
+        let gameState = 'menu'; // 'menu', 'playing', 'paused', 'gameOver'
+        let score = 0;
+        let highScore = parseInt(localStorage.getItem('subwaySurfersHighScore') || '0');
+        let playerLane = 1; // 0, 1, or 2
+        let playerY = 0;
+        let isJumping = false;
+        let isSliding = false;
+        let obstacles = [];
+        let coins = [];
+        let obstacleId = 0;
+        let coinId = 0;
+
+        // Three.js setup
+        let scene, camera, renderer;
+        let player, playerHead;
+        let trackPieces = [];
+        let obstacleObjects = [];
+        let coinObjects = [];
+
+        function init() {
+            // Set up scene
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gameCanvas'), antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+            // Camera position
+            camera.position.set(0, 4, 8);
+            camera.lookAt(0, 0, 0);
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(10, 10, 5);
+            directionalLight.castShadow = true;
+            directionalLight.shadow.mapSize.width = 2048;
+            directionalLight.shadow.mapSize.height = 2048;
+            scene.add(directionalLight);
+
+            // Create player
+            createPlayer();
+            
+            // Create track
+            createTrack();
+
+            // Update high score display
+            updateHighScoreDisplays();
+
+            // Handle window resize
+            window.addEventListener('resize', onWindowResize);
+            
+            // Handle keyboard input
+            document.addEventListener('keydown', onKeyDown);
+        }
+
+        function createPlayer() {
+            // Player body
+            const bodyGeometry = new THREE.BoxGeometry(0.6, 1.2, 0.6);
+            const bodyMaterial = new THREE.MeshLambertMaterial({ color: 0x4f46e5 });
+            player = new THREE.Mesh(bodyGeometry, bodyMaterial);
+            player.position.set(LANES[playerLane], 0, 1);
+            player.castShadow = true;
+            scene.add(player);
+
+            // Player head
+            const headGeometry = new THREE.SphereGeometry(0.3);
+            const headMaterial = new THREE.MeshLambertMaterial({ color: 0xfbbf24 });
+            playerHead = new THREE.Mesh(headGeometry, headMaterial);
+            playerHead.position.set(LANES[playerLane], 1, 1);
+            playerHead.castShadow = true;
+            scene.add(playerHead);
+        }
+
+        function createTrack() {
+            const trackGeometry = new THREE.BoxGeometry(8, 0.1, 5);
+            const trackMaterial = new THREE.MeshLambertMaterial({ color: 0x374151 });
+            
+            for (let i = 0; i < 20; i++) {
+                const track = new THREE.Mesh(trackGeometry, trackMaterial);
+                track.position.set(0, -1, -50 + i * 5);
+                track.receiveShadow = true;
+                trackPieces.push(track);
+                scene.add(track);
+            }
+        }
+
+        function createObstacle(lane, z) {
+            const geometry = new THREE.BoxGeometry(1.5, 1.5, 0.5);
+            const material = new THREE.MeshLambertMaterial({ color: 0xdc2626 });
+            const obstacle = new THREE.Mesh(geometry, material);
+            obstacle.position.set(LANES[lane], 0, z);
+            obstacle.castShadow = true;
+            obstacle.userData = { lane, id: obstacleId++ };
+            obstacleObjects.push(obstacle);
+            scene.add(obstacle);
+        }
+
+        function createCoin(lane, z) {
+            const geometry = new THREE.CylinderGeometry(0.3, 0.3, 0.1, 8);
+            const material = new THREE.MeshLambertMaterial({ color: 0xfbbf24 });
+            const coin = new THREE.Mesh(geometry, material);
+            coin.position.set(LANES[lane], 1, z);
+            coin.rotation.x = Math.PI / 2;
+            coin.castShadow = true;
+            coin.userData = { lane, id: coinId++ };
+            coinObjects.push(coin);
+            scene.add(coin);
+        }
+
+        function updatePlayer() {
+            if (!player || !playerHead) return;
+
+            // Smooth lane movement
+            const targetX = LANES[playerLane];
+            player.position.x = THREE.MathUtils.lerp(player.position.x, targetX, 0.1);
+            playerHead.position.x = player.position.x;
+
+            // Handle jumping/sliding
+            player.position.y = playerY;
+            if (isSliding) {
+                player.scale.y = 0.25;
+                playerHead.position.y = playerY + 0.5;
+            } else {
+                player.scale.y = 1;
+                playerHead.position.y = playerY + 1;
+            }
+
+            // Running animation
+            player.rotation.y = Math.sin(Date.now() * 0.008) * 0.1;
+        }
+
+        function updateObstacles() {
+            for (let i = obstacleObjects.length - 1; i >= 0; i--) {
+                const obstacle = obstacleObjects[i];
+                obstacle.position.z += GAME_SPEED;
+
+                // Check collision
+                if (obstacle.position.z > 1 && obstacle.position.z < 2) {
+                    const playerLanePos = LANES[playerLane];
+                    if (Math.abs(obstacle.position.x - playerLanePos) < 1 && !isJumping && !isSliding) {
+                        gameOver();
+                        return;
+                    }
+                }
+
+                // Remove when behind player
+                if (obstacle.position.z > 5) {
+                    scene.remove(obstacle);
+                    obstacleObjects.splice(i, 1);
+                }
+            }
+        }
+
+        function updateCoins() {
+            for (let i = coinObjects.length - 1; i >= 0; i--) {
+                const coin = coinObjects[i];
+                coin.position.z += GAME_SPEED;
+                coin.rotation.y += 0.1;
+
+                // Check collection
+                if (coin.position.z > 0.5 && coin.position.z < 2.5) {
+                    const playerLanePos = LANES[playerLane];
+                    if (Math.abs(coin.position.x - playerLanePos) < 1) {
+                        collectCoin();
+                        scene.remove(coin);
+                        coinObjects.splice(i, 1);
+                        continue;
+                    }
+                }
+
+                // Remove when behind player
+                if (coin.position.z > 5) {
+                    scene.remove(coin);
+                    coinObjects.splice(i, 1);
+                }
+            }
+        }
+
+        function updateTrack() {
+            trackPieces.forEach(track => {
+                track.position.z += GAME_SPEED;
+                if (track.position.z > 10) {
+                    track.position.z = -50;
+                }
+            });
+        }
+
+        function spawnObstaclesAndCoins() {
+            if (Math.random() < OBSTACLE_SPAWN_RATE) {
+                const lane = Math.floor(Math.random() * 3);
+                createObstacle(lane, -20);
+            }
+
+            if (Math.random() < COIN_SPAWN_RATE) {
+                const lane = Math.floor(Math.random() * 3);
+                createCoin(lane, -15);
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (gameState === 'playing') {
+                updatePlayer();
+                updateObstacles();
+                updateCoins();
+                updateTrack();
+                spawnObstaclesAndCoins();
+                
+                // Increment score
+                score += 1;
+                updateScoreDisplay();
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        function onKeyDown(event) {
+            if (gameState !== 'playing') return;
+
+            switch (event.key) {
+                case 'ArrowLeft':
+                case 'a':
+                case 'A':
+                    event.preventDefault();
+                    playerLane = Math.max(0, playerLane - 1);
+                    break;
+                case 'ArrowRight':
+                case 'd':
+                case 'D':
+                    event.preventDefault();
+                    playerLane = Math.min(2, playerLane + 1);
+                    break;
+                case 'ArrowUp':
+                case 'w':
+                case 'W':
+                case ' ':
+                    event.preventDefault();
+                    if (!isJumping) {
+                        jump();
+                    }
+                    break;
+                case 'ArrowDown':
+                case 's':
+                case 'S':
+                    event.preventDefault();
+                    if (!isSliding && !isJumping) {
+                        slide();
+                    }
+                    break;
+            }
+        }
+
+        function jump() {
+            isJumping = true;
+            playerY = JUMP_HEIGHT;
+            setTimeout(() => {
+                playerY = 0;
+                isJumping = false;
+            }, 500);
+        }
+
+        function slide() {
+            isSliding = true;
+            setTimeout(() => {
+                isSliding = false;
+            }, 500);
+        }
+
+        function collectCoin() {
+            score += 10;
+            updateScoreDisplay();
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // Game state functions
+        function startGame() {
+            gameState = 'playing';
+            score = 0;
+            playerLane = 1;
+            playerY = 0;
+            isJumping = false;
+            isSliding = false;
+            
+            // Clear existing objects
+            clearObstaclesAndCoins();
+            
+            // Reset player position
+            if (player) {
+                player.position.set(LANES[playerLane], 0, 1);
+                player.scale.y = 1;
+            }
+            if (playerHead) {
+                playerHead.position.set(LANES[playerLane], 1, 1);
+            }
+            
+            // Show game UI
+            document.getElementById('menuScreen').classList.add('hidden');
+            document.getElementById('pauseScreen').classList.add('hidden');
+            document.getElementById('gameOverScreen').classList.add('hidden');
+            document.getElementById('scoreDisplay').classList.remove('hidden');
+            document.getElementById('pauseBtn').classList.remove('hidden');
+            document.getElementById('controlsInfo').classList.remove('hidden');
+            
+            updateScoreDisplay();
+        }
+
+        function pauseGame() {
+            gameState = 'paused';
+            document.getElementById('pauseScreen').classList.remove('hidden');
+            document.getElementById('pauseScore').textContent = score;
+            document.getElementById('pauseHighScore').textContent = highScore;
+        }
+
+        function resumeGame() {
+            gameState = 'playing';
+            document.getElementById('pauseScreen').classList.add('hidden');
+        }
+
+        function gameOver() {
+            gameState = 'gameOver';
+            
+            // Update high score
+            let isNewHighScore = false;
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('subwaySurfersHighScore', highScore.toString());
+                isNewHighScore = true;
+            }
+            
+            // Show game over screen
+            document.getElementById('scoreDisplay').classList.add('hidden');
+            document.getElementById('pauseBtn').classList.add('hidden');
+            document.getElementById('controlsInfo').classList.add('hidden');
+            document.getElementById('gameOverScreen').classList.remove('hidden');
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('gameOverHighScore').textContent = highScore;
+            
+            if (isNewHighScore && score > 0) {
+                document.getElementById('newHighScore').style.display = 'block';
+            } else {
+                document.getElementById('newHighScore').style.display = 'none';
+            }
+            
+            updateHighScoreDisplays();
+        }
+
+        function resetGame() {
+            gameState = 'menu';
+            clearObstaclesAndCoins();
+            
+            // Hide all screens except menu
+            document.getElementById('pauseScreen').classList.add('hidden');
+            document.getElementById('gameOverScreen').classList.add('hidden');
+            document.getElementById('scoreDisplay').classList.add('hidden');
+            document.getElementById('pauseBtn').classList.add('hidden');
+            document.getElementById('controlsInfo').classList.add('hidden');
+            document.getElementById('menuScreen').classList.remove('hidden');
+        }
+
+        function clearObstaclesAndCoins() {
+            // Remove obstacles
+            obstacleObjects.forEach(obstacle => scene.remove(obstacle));
+            obstacleObjects = [];
+            
+            // Remove coins
+            coinObjects.forEach(coin => scene.remove(coin));
+            coinObjects = [];
+        }
+
+        function updateScoreDisplay() {
+            document.getElementById('currentScore').textContent = score;
+            document.getElementById('highScore').textContent = highScore;
+        }
+
+        function updateHighScoreDisplays() {
+            document.getElementById('menuHighScore').textContent = highScore;
+        }
+
+        // Initialize the game
+        init();
+        animate();
+    </script>
+    <a href="index.html"><button>Back</button></a>
+</body>
+</html>

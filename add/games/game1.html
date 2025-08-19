@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangman Game</title>
+    <style>
+        body {
+            background-image: url(concole.png);
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-attachment: fixed;
+            font-family: 'Arial', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .game-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .hangman-display {
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 1.5em;
+            line-height: 1.2;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            white-space: pre-line;
+        }
+        
+        .word-display {
+            text-align: center;
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 30px 0;
+            letter-spacing: 0.3em;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .lives {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #ff6b6b;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        
+        .guess-section {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .guess-input {
+            font-size: 1.2em;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 25px;
+            margin: 0 10px;
+            text-align: center;
+            text-transform: uppercase;
+            width: 50px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+        
+        .guess-button {
+            font-size: 1.2em;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .guess-button:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+        
+        .guess-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .new-game-button {
+            font-size: 1.2em;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            background: #ff6b6b;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 20px auto;
+        }
+        
+        .new-game-button:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+        
+        .guessed-letters {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .guessed-letters span {
+            display: inline-block;
+            margin: 5px;
+            padding: 5px 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            font-weight: bold;
+        }
+        
+        .message {
+            text-align: center;
+            font-size: 1.3em;
+            margin: 20px 0;
+            font-weight: bold;
+            min-height: 30px;
+        }
+        
+        .win {
+            color: #4CAF50;
+            animation: pulse 1s infinite;
+        }
+        
+        .lose {
+            color: #ff6b6b;
+            animation: shake 0.5s;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .word-category {
+            text-align: center;
+            font-size: 1.1em;
+            margin: 10px 0;
+            color: #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🎯 Hangman Game 🎯</h1>
+        
+        <div class="hangman-display" id="hangmanDisplay"></div>
+        
+        <div class="word-category" id="wordCategory"></div>
+        <div class="word-display" id="wordDisplay"></div>
+        
+        <div class="game-info">
+            <div class="lives" id="livesDisplay">Lives: 6</div>
+        </div>
+        
+        <div class="guess-section">
+            <input type="text" id="guessInput" class="guess-input" maxlength="1" placeholder="?">
+            <button id="guessButton" class="guess-button">Guess</button>
+        </div>
+        
+        <div class="message" id="message"></div>
+        
+        <div class="guessed-letters">
+            <strong>Guessed Letters:</strong>
+            <div id="guessedLetters"></div>
+        </div>
+        
+        <button id="newGameButton" class="new-game-button">New Game</button>
+    </div>
+
+    <script>
+        class HangmanGame {
+            constructor() {
+                this.words = [
+                    {word: 'JAVASCRIPT', category: 'Programming'},
+                    {word: 'PYTHON', category: 'Programming'},
+                    {word: 'ELEPHANT', category: 'Animals'},
+                    {word: 'MOUNTAIN', category: 'Nature'},
+                    {word: 'RAINBOW', category: 'Nature'},
+                    {word: 'GUITAR', category: 'Music'},
+                    {word: 'PIZZA', category: 'Food'},
+                    {word: 'ADVENTURE', category: 'Activities'},
+                    {word: 'BUTTERFLY', category: 'Animals'},
+                    {word: 'TELESCOPE', category: 'Science'},
+                    {word: 'CHOCOLATE', category: 'Food'},
+                    {word: 'BASKETBALL', category: 'Sports'},
+                    {word: 'COMPUTER', category: 'Technology'},
+                    {word: 'VACATION', category: 'Activities'},
+                    {word: 'DIAMOND', category: 'Gems'},
+                    {word: 'FIREWORKS', category: 'Celebrations'},
+                    {word: 'SKATEBOARD', category: 'Sports'},
+                    {word: 'THUNDERSTORM', category: 'Weather'}
+                ];
+                
+                this.hangmanStages = [
+                    '  +---+\n  |   |\n      |\n      |\n      |\n      |\n=========',
+                    '  +---+\n  |   |\n  O   |\n      |\n      |\n      |\n=========',
+                    '  +---+\n  |   |\n  O   |\n  |   |\n      |\n      |\n=========',
+                    '  +---+\n  |   |\n  O   |\n /|   |\n      |\n      |\n=========',
+                    '  +---+\n  |   |\n  O   |\n /|\\  |\n      |\n      |\n=========',
+                    '  +---+\n  |   |\n  O   |\n /|\\  |\n /    |\n      |\n=========',
+                    '  +---+\n  |   |\n  O   |\n /|\\  |\n / \\  |\n      |\n========='
+                ];
+                
+                this.initializeElements();
+                this.newGame();
+                this.setupEventListeners();
+            }
+            
+            initializeElements() {
+                this.hangmanDisplay = document.getElementById('hangmanDisplay');
+                this.wordCategory = document.getElementById('wordCategory');
+                this.wordDisplay = document.getElementById('wordDisplay');
+                this.livesDisplay = document.getElementById('livesDisplay');
+                this.guessInput = document.getElementById('guessInput');
+                this.guessButton = document.getElementById('guessButton');
+                this.message = document.getElementById('message');
+                this.guessedLetters = document.getElementById('guessedLetters');
+                this.newGameButton = document.getElementById('newGameButton');
+            }
+            
+            newGame() {
+                const randomIndex = Math.floor(Math.random() * this.words.length);
+                this.currentWord = this.words[randomIndex].word;
+                this.currentCategory = this.words[randomIndex].category;
+                this.guessedLettersArray = [];
+                this.wrongGuesses = 0;
+                this.maxWrongGuesses = 6;
+                this.gameOver = false;
+                
+                this.updateDisplay();
+                this.message.textContent = '';
+                this.message.className = '';
+                this.guessInput.disabled = false;
+                this.guessButton.disabled = false;
+                this.guessInput.focus();
+            }
+            
+            setupEventListeners() {
+                this.guessButton.addEventListener('click', () => this.makeGuess());
+                this.guessInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.makeGuess();
+                    }
+                });
+                this.guessInput.addEventListener('input', (e) => {
+                    e.target.value = e.target.value.toUpperCase().replace(/[^A-Z]/g, '');
+                });
+                this.newGameButton.addEventListener('click', () => this.newGame());
+            }
+            
+            makeGuess() {
+                if (this.gameOver) return;
+                
+                const guess = this.guessInput.value.toUpperCase();
+                
+                if (!guess || guess.length !== 1) {
+                    this.message.textContent = 'Please enter a single letter!';
+                    this.message.className = '';
+                    return;
+                }
+                
+                if (this.guessedLettersArray.includes(guess)) {
+                    this.message.textContent = 'You already guessed that letter!';
+                    this.message.className = '';
+                    this.guessInput.value = '';
+                    return;
+                }
+                
+                this.guessedLettersArray.push(guess);
+                
+                if (this.currentWord.includes(guess)) {
+                    this.message.textContent = 'Good guess!';
+                    this.message.className = '';
+                    
+                    if (this.isWordComplete()) {
+                        this.endGame(true);
+                    }
+                } else {
+                    this.wrongGuesses++;
+                    this.message.textContent = 'Wrong letter!';
+                    this.message.className = '';
+                    
+                    if (this.wrongGuesses >= this.maxWrongGuesses) {
+                        this.endGame(false);
+                    }
+                }
+                
+                this.updateDisplay();
+                this.guessInput.value = '';
+            }
+            
+            isWordComplete() {
+                return this.currentWord.split('').every(letter => 
+                    this.guessedLettersArray.includes(letter)
+                );
+            }
+            
+            endGame(won) {
+                this.gameOver = true;
+                this.guessInput.disabled = true;
+                this.guessButton.disabled = true;
+                
+                if (won) {
+                    this.message.textContent = '🎉 Congratulations! You won! 🎉';
+                    this.message.className = 'win';
+                } else {
+                    this.message.textContent = `💀 Game Over! The word was: ${this.currentWord}`;
+                    this.message.className = 'lose';
+                }
+            }
+            
+            updateDisplay() {
+                // Update hangman drawing
+                this.hangmanDisplay.textContent = this.hangmanStages[this.wrongGuesses];
+                
+                // Update word category
+                this.wordCategory.textContent = `Category: ${this.currentCategory}`;
+                
+                // Update word display
+                const displayWord = this.currentWord.split('').map(letter => 
+                    this.guessedLettersArray.includes(letter) ? letter : '_'
+                ).join(' ');
+                this.wordDisplay.textContent = displayWord;
+                
+                // Update lives
+                const livesLeft = this.maxWrongGuesses - this.wrongGuesses;
+                this.livesDisplay.textContent = `Lives: ${livesLeft}`;
+                
+                // Update guessed letters
+                this.guessedLetters.innerHTML = this.guessedLettersArray.map(letter => 
+                    `<span>${letter}</span>`
+                ).join('');
+            }
+        }
+        
+        // Start the game when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new HangmanGame();
+        });
+    </script>
+    <a href="index.html"><button>Back</button></a>
+</body>
+</html>
